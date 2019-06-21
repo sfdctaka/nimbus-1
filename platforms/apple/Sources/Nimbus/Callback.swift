@@ -29,11 +29,21 @@ class Callback: Callable {
     }
 
     func call(args: [Any]) throws -> Any {
-        let jsonData = try JSONSerialization.data(withJSONObject: args, options: [])
-        let jsonString = String(data: jsonData, encoding: .utf8)
+        var jsonString: String = "[]"
+        if let bbb = args as? [EncodableValue] {
+            let jsonEncoder = JSONEncoder()
+            let jsonData = try? jsonEncoder.encode(bbb)
+            jsonString = String(data: jsonData!, encoding: .utf8)!
+        }
+
         DispatchQueue.main.async {
             self.webView?.evaluateJavaScript("""
-            nimbus.callCallback('\(self.callbackId)', \(jsonString!));
+                var args = [];
+                var jsonArgs = \(jsonString);
+                jsonArgs.forEach(arg => {
+                    args.push(arg.v);
+                });
+                nimbus.callCallback('\(self.callbackId)', args);
             """)
         }
         return ()
