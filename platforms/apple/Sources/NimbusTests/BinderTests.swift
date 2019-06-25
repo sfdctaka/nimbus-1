@@ -67,13 +67,14 @@ class BinderTests: XCTestCase {
 
     func testBindUnaryWithUnaryCallback() {
         binder.bind(BindTarget.unaryWithUnaryCallback, as: "")
+        //binder.bind(BindTarget.unaryWithUnaryCallbackThrows, as: "")
         let expecter = expectation(description: "callback")
         var result: Int?
-        let callback: BindTarget.UnaryCallback = { value in
-            result = value
+        let callback: (Encodable)->Void = { value in
+            result = EncodableValue.value(value).getInteger()
             expecter.fulfill()
         }
-        _ = try? binder.callable?.call(args: [make_callable(callback)])
+        _ = try? binder.callable?.call(args: [callback])
         wait(for: [expecter], timeout: 5)
         XCTAssert(binder.target.called)
         XCTAssertEqual(result, .some(42))
@@ -85,7 +86,7 @@ class BinderTests: XCTestCase {
         let callback: BindTarget.UnaryCallback = { value in
             expecter.fulfill()
         }
-        XCTAssertThrowsError(try binder.callable?.call(args: [make_callable(callback)]))
+        XCTAssertThrowsError(try binder.callable?.call(args: [callback]))
         wait(for: [expecter], timeout: 5)
         XCTAssert(binder.target.called)
     }
@@ -95,10 +96,12 @@ class BinderTests: XCTestCase {
         let expecter = expectation(description: "callback")
         var result: Int?
         let callback: BindTarget.BinaryCallback = { value1, value2 in
-            result = value1 + value2
+            let result1 = EncodableValue.value(value1).getInteger()
+            let result2 = EncodableValue.value(value2).getInteger()
+            result = result1! + result2!
             expecter.fulfill()
         }
-        _ = try? binder.callable?.call(args: [make_callable(callback)])
+        _ = try? binder.callable?.call(args: [callback])
         wait(for: [expecter], timeout: 5)
         XCTAssert(binder.target.called)
         XCTAssertEqual(result, .some(79))
@@ -110,7 +113,7 @@ class BinderTests: XCTestCase {
         let callback: BindTarget.BinaryCallback = { value1, value2 in
             expecter.fulfill()
         }
-        XCTAssertThrowsError(try binder.callable?.call(args: [make_callable(callback)]))
+        XCTAssertThrowsError(try binder.callable?.call(args: [callback]))
         wait(for: [expecter], timeout: 5)
         XCTAssert(binder.target.called)
     }
@@ -145,10 +148,10 @@ class BinderTests: XCTestCase {
         let expecter = expectation(description: "callback")
         var result: Int?
         let callback: BindTarget.UnaryCallback = { value in
-            result = value
+            result = EncodableValue.value(value).getInteger()
             expecter.fulfill()
         }
-        _ = try? binder.callable?.call(args: [42, make_callable(callback)])
+        _ = try? binder.callable?.call(args: [42, callback])
         wait(for: [expecter], timeout: 5)
         XCTAssert(binder.target.called)
         XCTAssertEqual(result, .some(42))
@@ -160,7 +163,7 @@ class BinderTests: XCTestCase {
         let callback: BindTarget.UnaryCallback = { value in
             expecter.fulfill()
         }
-        XCTAssertThrowsError(try binder.callable?.call(args: [42, make_callable(callback)]))
+        XCTAssertThrowsError(try binder.callable?.call(args: [42, callback]))
         wait(for: [expecter], timeout: 5)
         XCTAssert(binder.target.called)
     }
@@ -170,10 +173,12 @@ class BinderTests: XCTestCase {
         let expecter = expectation(description: "callback")
         var result: Int?
         let callback: BindTarget.BinaryCallback = { value1, value2 in
-            result = value1 + value2
+            let result1 = EncodableValue.value(value1).getInteger()
+            let result2 = EncodableValue.value(value2).getInteger()
+            result = result1! + result2!
             expecter.fulfill()
         }
-        _ = try? binder.callable?.call(args: [42, make_callable(callback)])
+        _ = try? binder.callable?.call(args: [42, callback])
         wait(for: [expecter], timeout: 5)
         XCTAssert(binder.target.called)
         XCTAssertEqual(result, .some(79))
@@ -185,7 +190,7 @@ class BinderTests: XCTestCase {
         let callback: BindTarget.BinaryCallback = { value1, value2 in
             expecter.fulfill()
         }
-        XCTAssertThrowsError(try binder.callable?.call(args: [42, make_callable(callback)]))
+        XCTAssertThrowsError(try binder.callable?.call(args: [42, callback]))
         wait(for: [expecter], timeout: 5)
         XCTAssert(binder.target.called)
     }
@@ -220,10 +225,10 @@ class BinderTests: XCTestCase {
         let expecter = expectation(description: "callback")
         var result: Int?
         let callback: BindTarget.UnaryCallback = { value in
-            result = value
+            result = EncodableValue.value(value).getInteger()
             expecter.fulfill()
         }
-        _ = try? binder.callable?.call(args: [42, 37, make_callable(callback)])
+        _ = try? binder.callable?.call(args: [42, 37, callback])
         wait(for: [expecter], timeout: 5)
         XCTAssert(binder.target.called)
         XCTAssertEqual(result, .some(79))
@@ -235,7 +240,7 @@ class BinderTests: XCTestCase {
         let callback: BindTarget.UnaryCallback = { value in
             expecter.fulfill()
         }
-        XCTAssertThrowsError(try binder.callable?.call(args: [42, 37, make_callable(callback)]))
+        XCTAssertThrowsError(try binder.callable?.call(args: [42, 37, callback]))
         wait(for: [expecter], timeout: 5)
         XCTAssert(binder.target.called)
     }
@@ -245,10 +250,12 @@ class BinderTests: XCTestCase {
         let expecter = expectation(description: "callback")
         var result: Int?
         let callback: BindTarget.BinaryCallback = { value1, value2 in
-            result = value1 + value2
+            let result1 = EncodableValue.value(value1).getInteger()
+            let result2 = EncodableValue.value(value2).getInteger()
+            result = result1! + result2!
             expecter.fulfill()
         }
-        _ = try? binder.callable?.call(args: [42, 37, make_callable(callback)])
+        _ = try? binder.callable?.call(args: [42, 37, callback])
         wait(for: [expecter], timeout: 5)
         XCTAssert(binder.target.called)
         XCTAssertEqual(result, .some(79))
@@ -260,7 +267,7 @@ class BinderTests: XCTestCase {
         let callback: BindTarget.BinaryCallback = { value1, value2 in
             expecter.fulfill()
         }
-        XCTAssertThrowsError(try binder.callable?.call(args: [42, 37, make_callable(callback)]))
+        XCTAssertThrowsError(try binder.callable?.call(args: [42, 37, callback]))
         wait(for: [expecter], timeout: 5)
         XCTAssert(binder.target.called)
     }
@@ -295,10 +302,10 @@ class BinderTests: XCTestCase {
         let expecter = expectation(description: "callback")
         var result: Int?
         let callback: BindTarget.UnaryCallback = { value in
-            result = value
+            result = EncodableValue.value(value).getInteger()
             expecter.fulfill()
         }
-        _ = try? binder.callable?.call(args: [42, 37, 13, make_callable(callback)])
+        _ = try? binder.callable?.call(args: [42, 37, 13, callback])
         wait(for: [expecter], timeout: 5)
         XCTAssert(binder.target.called)
         XCTAssertEqual(result, .some(92))
@@ -309,10 +316,10 @@ class BinderTests: XCTestCase {
         let expecter = expectation(description: "callback")
         var result: Int?
         let callback: BindTarget.UnaryCallback = { value in
-            result = value
+            result = EncodableValue.value(value).getInteger()
             expecter.fulfill()
         }
-        XCTAssertThrowsError(try binder.callable?.call(args: [42, 37, 13, make_callable(callback)]))
+        XCTAssertThrowsError(try binder.callable?.call(args: [42, 37, 13, callback]))
         wait(for: [expecter], timeout: 5)
         XCTAssert(binder.target.called)
         XCTAssertEqual(result, .some(92))
@@ -323,10 +330,12 @@ class BinderTests: XCTestCase {
         let expecter = expectation(description: "callback")
         var result: Int?
         let callback: BindTarget.BinaryCallback = { value1, value2 in
-            result = value1 + value2
+            let result1 = EncodableValue.value(value1).getInteger()
+            let result2 = EncodableValue.value(value2).getInteger()
+            result = result1! + result2!
             expecter.fulfill()
         }
-        _ = try? binder.callable?.call(args: [42, 37, 13, make_callable(callback)])
+        _ = try? binder.callable?.call(args: [42, 37, 13, callback])
         wait(for: [expecter], timeout: 5)
         XCTAssert(binder.target.called)
         XCTAssertEqual(result, .some(92))
@@ -337,10 +346,12 @@ class BinderTests: XCTestCase {
         let expecter = expectation(description: "callback")
         var result: Int?
         let callback: BindTarget.BinaryCallback = { value1, value2 in
-            result = value1 + value2
+            let result1 = EncodableValue.value(value1).getInteger()
+            let result2 = EncodableValue.value(value2).getInteger()
+            result = result1! + result2!
             expecter.fulfill()
         }
-        XCTAssertThrowsError(try binder.callable?.call(args: [42, 37, 13, make_callable(callback)]))
+        XCTAssertThrowsError(try binder.callable?.call(args: [42, 37, 13, callback]))
         wait(for: [expecter], timeout: 5)
         XCTAssert(binder.target.called)
         XCTAssertEqual(result, .some(92))
@@ -376,10 +387,10 @@ class BinderTests: XCTestCase {
         let expecter = expectation(description: "callback")
         var result: Int?
         let callback: BindTarget.UnaryCallback = { value in
-            result = value
+            result = EncodableValue.value(value).getInteger()
             expecter.fulfill()
         }
-        _ = try? binder.callable?.call(args: [42, 37, 13, 7, make_callable(callback)])
+        _ = try? binder.callable?.call(args: [42, 37, 13, 7, callback])
         wait(for: [expecter], timeout: 5)
         XCTAssert(binder.target.called)
         XCTAssertEqual(result, .some(99))
@@ -391,7 +402,7 @@ class BinderTests: XCTestCase {
         let callback: BindTarget.UnaryCallback = { value in
             expecter.fulfill()
         }
-        XCTAssertThrowsError(try binder.callable?.call(args: [42, 37, 13, 7, make_callable(callback)]))
+        XCTAssertThrowsError(try binder.callable?.call(args: [42, 37, 13, 7, callback]))
         wait(for: [expecter], timeout: 5)
         XCTAssert(binder.target.called)
     }
@@ -401,10 +412,12 @@ class BinderTests: XCTestCase {
         let expecter = expectation(description: "callback")
         var result: Int?
         let callback: BindTarget.BinaryCallback = { value1, value2 in
-            result = value1 + value2
+            let result1 = EncodableValue.value(value1).getInteger()
+            let result2 = EncodableValue.value(value2).getInteger()
+            result = result1! + result2!
             expecter.fulfill()
         }
-        _ = try? binder.callable?.call(args: [42, 37, 13, 7, make_callable(callback)])
+        _ = try? binder.callable?.call(args: [42, 37, 13, 7, callback])
         wait(for: [expecter], timeout: 5)
         XCTAssert(binder.target.called)
         XCTAssertEqual(result, .some(99))
@@ -416,7 +429,7 @@ class BinderTests: XCTestCase {
         let callback: BindTarget.BinaryCallback = { value1, value2 in
             expecter.fulfill()
         }
-        XCTAssertThrowsError(try binder.callable?.call(args: [42, 37, 13, 7, make_callable(callback)]))
+        XCTAssertThrowsError(try binder.callable?.call(args: [42, 37, 13, 7, callback]))
         wait(for: [expecter], timeout: 5)
         XCTAssert(binder.target.called)
     }
@@ -429,8 +442,8 @@ enum BindError: Error {
 class BindTarget {
     private(set) var called = false
 
-    typealias UnaryCallback = (Int) -> Void
-    typealias BinaryCallback = (Int, Int) -> Void
+    typealias UnaryCallback = (Encodable) -> Void
+    typealias BinaryCallback = (Encodable, Encodable) -> Void
 
     func nullaryNoReturn() {
         called = true
@@ -668,4 +681,15 @@ class TestBinder: Binder {
     }
 
     public var callable: Callable?
+}
+
+extension EncodableValue {
+    func getInteger() -> Int? {
+        switch self {
+        case .void:
+            return nil
+        case .value(let num):
+            return num as? Int
+        }
+    }
 }
