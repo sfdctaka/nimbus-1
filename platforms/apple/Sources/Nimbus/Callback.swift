@@ -32,18 +32,15 @@ class Callback: Callable {
         var jsonString: String = "[]"
         if let encodables = args as? [EncodableValue] {
             let jsonEncoder = JSONEncoder()
-            let jsonData = try? jsonEncoder.encode(encodables)
-            jsonString = String(data: jsonData!, encoding: .utf8)!
+            let jsonData = try jsonEncoder.encode(encodables)
+            jsonString = String(data: jsonData, encoding: .utf8)!
         }
 
         DispatchQueue.main.async {
             self.webView?.evaluateJavaScript("""
-                var args = [];
                 var jsonArgs = \(jsonString);
-                jsonArgs.forEach(arg => {
-                    args.push(arg.v);
-                });
-                nimbus.callCallback('\(self.callbackId)', args);
+                jsonArgs.map(arg => arg.v);
+                nimbus.callCallback('\(self.callbackId)', jsonArgs);
             """)
         }
         return ()

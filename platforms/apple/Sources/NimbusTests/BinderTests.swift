@@ -67,7 +67,6 @@ class BinderTests: XCTestCase {
 
     func testBindUnaryWithUnaryCallback() {
         binder.bind(BindTarget.unaryWithUnaryCallback, as: "")
-        //binder.bind(BindTarget.unaryWithUnaryCallbackThrows, as: "")
         let expecter = expectation(description: "callback")
         var result: Int?
         let callback: (Encodable)->Void = { value in

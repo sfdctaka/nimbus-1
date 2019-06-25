@@ -8,6 +8,18 @@
 import 'mocha';
 import {expect} from 'chai';
 
+interface MochaMessage {
+  intField: number;
+  stringField: string;
+}
+
+interface CallbackTestExtension {
+  callbackWithSingleParam(completion: (mm1: MochaMessage) => void): void;
+  callbackWithTwoParams(completion: (mm1: MochaMessage, mm2: MochaMessage) => void): void;
+}
+
+declare var callbackTestExtension: CallbackTestExtension;
+
 describe('Callbacks with', () => {
   it('single user defined data type is called', (done) => {
     callbackTestExtension.callbackWithSingleParam((mm1: MochaMessage) => {
