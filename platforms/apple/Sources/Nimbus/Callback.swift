@@ -32,10 +32,7 @@ class Callback: Callable {
         var jsonString: String = "[]"
         if let encodables = args as? [Encodable] {
             let jsonEncoder = JSONEncoder()
-            let encodableValues = encodables.map { encodable in
-                return EncodableValue.value(encodable)
-            }
-            let jsonData = try jsonEncoder.encode(encodableValues)
+            let jsonData = try jsonEncoder.encode(EncodableValue.array(encodables))
             jsonString = String(data: jsonData, encoding: .utf8)!
         } else {
             // Parameters passed to callback are implied that they
@@ -43,11 +40,11 @@ class Callback: Callable {
             // any elements don't throw parameter error.
             throw ParameterError()
         }
-        
+
         DispatchQueue.main.async {
             self.webView?.evaluateJavaScript("""
-                var jsonArgs = JSON.parse('\(jsonString)');
-                mappedJsonArgs = jsonArgs.map(arg => arg.v);
+                var jsonArgs = \(jsonString);
+                mappedJsonArgs = jsonArgs.v;
                 nimbus.callCallback('\(self.callbackId)', mappedJsonArgs);
             """)
         }

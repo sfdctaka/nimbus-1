@@ -9,9 +9,7 @@ class CallbackTestExtension : NimbusExtension {
 
     @ExtensionMethod
     fun callbackWithTwoParams(arg: (param0: MochaTests.MochaMessage, param1: MochaTests.MochaMessage) -> Unit) {
-        var mochaMessage = MochaTests.MochaMessage()
-        mochaMessage.intField = 6
-        mochaMessage.stringField = "int param is 6"
+        var mochaMessage = MochaTests.MochaMessage("int param is 6", 6)
         arg(MochaTests.MochaMessage(), mochaMessage)
     }
 

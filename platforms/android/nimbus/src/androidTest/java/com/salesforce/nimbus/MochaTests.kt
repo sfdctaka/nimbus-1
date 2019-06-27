@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit
 @RunWith(AndroidJUnit4::class)
 class MochaTests {
 
-    data class MochaMessage(var stringField: String = "This is a string", var intField: Int = 42) : JSONSerializable {
+    data class MochaMessage(val stringField: String = "This is a string", val intField: Int = 42) : JSONSerializable {
         override fun stringify(): String {
             val jsonObject = JSONObject()
             jsonObject.put("stringField", stringField)

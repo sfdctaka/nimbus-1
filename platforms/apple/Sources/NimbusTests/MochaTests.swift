@@ -38,7 +38,7 @@ class MochaTests: XCTestCase, WKNavigationDelegate {
         }
 
     }
-    
+
     var webView: WKWebView!
 
     var loadingExpectation: XCTestExpectation?
