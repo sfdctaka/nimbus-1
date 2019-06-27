@@ -95,6 +95,15 @@ public class CallbackTestExtension {
         mochaMessage.stringField = "int param is 6"
         completion(MochaTests.MochaMessage(), mochaMessage)
     }
+    func callbackWithSinglePrimitiveParam(completion: @escaping (Int) -> Swift.Void) {
+        completion(777)
+    }
+    func callbackWithTwoPrimitiveParams(completion: @escaping (Int, Int) -> Swift.Void) {
+        completion(777, 888)
+    }
+    func callbackWithPrimitiveAndUddtParams(completion: @escaping (Int, MochaTests.MochaMessage) -> Swift.Void) {
+        completion(777, MochaTests.MochaMessage())
+    }
 }
 
 extension CallbackTestExtension: NimbusExtension {
@@ -102,5 +111,8 @@ extension CallbackTestExtension: NimbusExtension {
         let connection = webView.addConnection(to: self, as: "callbackTestExtension")
         connection.bind(CallbackTestExtension.callbackWithSingleParam, as: "callbackWithSingleParam")
         connection.bind(CallbackTestExtension.callbackWithTwoParams, as: "callbackWithTwoParams")
+        connection.bind(CallbackTestExtension.callbackWithSinglePrimitiveParam, as: "callbackWithSinglePrimitiveParam")
+        connection.bind(CallbackTestExtension.callbackWithTwoPrimitiveParams, as: "callbackWithTwoPrimitiveParams")
+        connection.bind(CallbackTestExtension.callbackWithPrimitiveAndUddtParams, as: "callbackWithPrimitiveAndUddtParams")
     }
 }

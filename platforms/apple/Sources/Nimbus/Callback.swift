@@ -30,17 +30,25 @@ class Callback: Callable {
 
     func call(args: [Any]) throws -> Any {
         var jsonString: String = "[]"
-        if let encodables = args as? [EncodableValue] {
+        if let encodables = args as? [Encodable] {
             let jsonEncoder = JSONEncoder()
-            let jsonData = try jsonEncoder.encode(encodables)
+            let encodableValues = encodables.map { encodable in
+                return EncodableValue.value(encodable)
+            }
+            let jsonData = try jsonEncoder.encode(encodableValues)
             jsonString = String(data: jsonData, encoding: .utf8)!
+        } else {
+            // Parameters passed to callback are implied that they
+            // conform to Encodable protocol.  If for some reason
+            // any elements don't throw parameter error.
+            throw ParameterError()
         }
-
+        
         DispatchQueue.main.async {
             self.webView?.evaluateJavaScript("""
-                var jsonArgs = \(jsonString);
-                jsonArgs.map(arg => arg.v);
-                nimbus.callCallback('\(self.callbackId)', jsonArgs);
+                var jsonArgs = JSON.parse('\(jsonString)');
+                mappedJsonArgs = jsonArgs.map(arg => arg.v);
+                nimbus.callCallback('\(self.callbackId)', mappedJsonArgs);
             """)
         }
         return ()
