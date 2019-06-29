@@ -100,10 +100,23 @@ extension Binder {
     /**
      Bind the specified function to this connection.
      */
-    public func bind<A0, CB0: Encodable>(_ function: @escaping (Target) -> (A0, @escaping (CB0) -> Void) throws -> Void, as name: String) {
+    public func bind<A0: Decodable, CB0: Encodable>(_ function: @escaping (Target) -> (A0, @escaping (CB0) -> Void) throws -> Void, as name: String) {
         let boundFunction = function(target)
         let wrappedFunction = { (arg0: A0, callable: Callable) -> Void in
-            try boundFunction(arg0) { cb0 in
+            let jsonDecoder = JSONDecoder()
+//            let decodedA0 = jsonDecoder.decode(A0.self, from:
+            print(arg0)
+            
+            var decodedA0: A0
+            if arg0 is Dictionary<String, Any> {
+                let jsonData = try JSONSerialization.data(withJSONObject:arg0)
+                decodedA0 = try jsonDecoder.decode(A0.self, from: jsonData)
+            } else {
+                decodedA0 = arg0
+            }
+            
+            //try boundFunction(arg0) { cb0 in
+            try boundFunction(decodedA0) { cb0 in
                 _ = try! callable.call(args: [cb0]) // swiftlint:disable:this force_try
             }
         }
