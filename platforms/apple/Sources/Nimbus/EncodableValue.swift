@@ -33,7 +33,7 @@ public enum EncodableValue: Encodable {
             try value.encode(to: superContainer)
         case .array(let array):
             var superContainer = container.nestedUnkeyedContainer(forKey: .v)
-            try array.forEach{ encodable in
+            try array.forEach { encodable in
                 try encodable.encode(to: superContainer.superEncoder())
             }
         }
