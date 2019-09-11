@@ -1,9 +1,7 @@
 package com.salesforce.nimbus
 
-
 import org.json.JSONArray
 import org.json.JSONObject
-
 
 @Extension(name = "callbackTestExtension")
 class CallbackTestExtension : NimbusExtension {
@@ -34,11 +32,10 @@ class CallbackTestExtension : NimbusExtension {
     }
 
     @ExtensionMethod
-    fun callbackWithPrimitiveAndArrayParams(arg:(param0: Int, param1: JSONArray) -> Unit) {
+    fun callbackWithPrimitiveAndArrayParams(arg: (param0: Int, param1: JSONArray) -> Unit) {
         var ja = JSONArray(listOf("one", "two", "three"))
         arg(777, ja)
     }
-
 
     @ExtensionMethod
     fun callbackWithPrimitiveAndDictionaryParams(arg: (param0: Int, param1: JSONObject) -> Unit) {
