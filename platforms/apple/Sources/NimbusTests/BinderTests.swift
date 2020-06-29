@@ -288,6 +288,28 @@ class BinderTests: XCTestCase {
         XCTAssert(binder.target.called)
     }
 
+    func testBindTernaryWithTwoUnaryCallbackWithReturn() {
+        binder.bind(binder.target.ternaryWithTwoUnaryCallbackWithReturnThrows, as: "")
+        let expecter0 = expectation(description: "callback0")
+        let expecter1 = expectation(description: "callback0")
+        var result0: Int?
+        var result1: Int?
+        let callback0: BindTarget.UnaryCallback = { value in
+            result0 = value
+            expecter0.fulfill()
+        }
+        let callback1: BindTarget.UnaryCallback = { value in
+            result1 = value
+            expecter1.fulfill()
+        }
+        let value = try? binder.callable([42, callback0, callback1]) as? Int
+        wait(for: [expecter0, expecter1], timeout: 5)
+        XCTAssert(binder.target.called)
+        XCTAssertEqual(value, .some(42))
+        XCTAssertEqual(result0, .some(42))
+        XCTAssertEqual(result1, .some(42))
+    }
+
     func testBindQuaternaryNoReturn() {
         binder.bind(binder.target.quaternaryNoReturn, as: "")
         _ = try? binder.callable([42, 37, 13, 7])
@@ -591,6 +613,13 @@ class BindTarget {
         throw BindError.boundMethodThrew
     }
 
+    func ternaryWithTwoUnaryCallbackWithReturnThrows(arg0: Int, callback0: @escaping UnaryCallback, callback1: @escaping UnaryCallback) -> Int {
+        called = true
+        callback0(arg0)
+        callback1(arg0)
+        return arg0
+    }
+    
     func quaternaryNoReturn(arg0: Int, arg1: Int, arg2: Int, arg3: Int) {
         called = true
     }

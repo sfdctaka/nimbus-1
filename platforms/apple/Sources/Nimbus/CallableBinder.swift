@@ -218,6 +218,20 @@ extension CallableBinder {
         }
     }
 
+    public func bind<R: Encodable, A0, CB0: Encodable, CB1: Encodable>(
+        _ name: String,
+        to function: @escaping (A0, @escaping (CB0) -> Void, @escaping (CB1) -> Void) throws -> R
+    ) where A0: Decodable {
+        bindCallable(name) { [weak self] (args: [Any?]) in
+            guard let self = self else { throw DecodeError() }
+            try self.assertArgsCount(expected: 3, actual: args.count)
+            let a0 = try self.decode(args[0], as: A0.self).get()
+            let firstCallback = try self.callback(from: args[1], taking: CB0.self).get()
+            let seconCallback = try self.callback(from: args[2], taking: CB1.self).get()
+            return try self.encode(function(a0, firstCallback, seconCallback)).get()
+        }
+    }
+
     public func bind<A0, A1, A2>(
         _ name: String,
         to function: @escaping (A0, A1, A2) throws -> Void
