@@ -288,7 +288,7 @@ class BinderTests: XCTestCase {
         XCTAssert(binder.target.called)
     }
 
-    func testBindTernaryWithTwoUnaryCallbackWithReturn() {
+    func testBindTernaryWithTwoUnaryCallbackWithReturnThrows() {
         binder.bind(binder.target.ternaryWithTwoUnaryCallbackWithReturnThrows, as: "")
         let expecter0 = expectation(description: "callback0")
         let expecter1 = expectation(description: "callback0")
