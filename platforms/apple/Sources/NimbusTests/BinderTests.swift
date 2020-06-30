@@ -619,7 +619,7 @@ class BindTarget {
         callback1(arg0)
         return arg0
     }
-    
+
     func quaternaryNoReturn(arg0: Int, arg1: Int, arg2: Int, arg3: Int) {
         called = true
     }
